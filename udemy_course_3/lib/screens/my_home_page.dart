@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:udemy_course_3/widgets/adaptive_app_bar.dart';
 
 import '../models/transaction.dart';
 import '../widgets/chart.dart';
@@ -40,18 +45,24 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _startAddNewTransaction(BuildContext cont, mediaQuery) {
-    showModalBottomSheet(
-      constraints: BoxConstraints(
-        maxHeight: ( mediaQuery.size.height * 0.80 ),
-      ),
-      context: cont,
-      builder: (_) {
-        return GestureDetector(
-          onTap: () {},
-          child: NewTransaction(_addNewTransaction),
-        );
-      },
-    );
+    Platform.isIOS
+        ? showCupertinoModalBottomSheet(
+            context: context,
+            builder: (context) => GestureDetector(
+              onTap: () {},
+              child: NewTransaction(_addNewTransaction),
+            ),
+          )
+        : showModalBottomSheet(
+            constraints: BoxConstraints(
+              maxHeight: (mediaQuery.size.height * 0.80),
+            ),
+            context: cont,
+            builder: (_) => GestureDetector(
+              onTap: () {},
+              child: NewTransaction(_addNewTransaction),
+            ),
+          );
   }
 
   void _deleteTransaction(String transactionId) {
@@ -64,62 +75,67 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
-    final appBar = AppBar(
-      title: const Text('Personal Expenses'),
-      actions: [
-        Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 4,
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => _startAddNewTransaction(context, mediaQuery),
-          ),
-        )
-      ],
-    );
+    final appBar = AdaptiveAppBar.getAdaptiveAppBar(
+        context, () => _startAddNewTransaction(context, mediaQuery));
 
-    return Scaffold(
-      appBar: appBar,
-      body: SizedBox(
+    final mainBody = SafeArea(
+      child: SizedBox(
         height: mediaQuery.size.height,
         child: SingleChildScrollView(
           child: mediaQuery.orientation == Orientation.portrait
               ? Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: ( mediaQuery.size.height * 0.4) - appBar.preferredSize.height - mediaQuery.padding.top,
-                child: Chart(_recentTransactions),
-              ),
-              SizedBox(
-                height: ( mediaQuery.size.height * 0.6),
-                child: TransactionList(_userTransaction, _deleteTransaction),
-              ),
-            ],
-          )
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: (mediaQuery.size.height * 0.4) -
+                          appBar.preferredSize.height -
+                          mediaQuery.padding.top,
+                      child: Chart(_recentTransactions),
+                    ),
+                    SizedBox(
+                      height: (mediaQuery.size.height * 0.6),
+                      child:
+                          TransactionList(_userTransaction, _deleteTransaction),
+                    ),
+                  ],
+                )
               : Row(
-            children: [
-              SizedBox(
-                width: mediaQuery.size.width * 0.4,
-                height: (mediaQuery.size.height * 0.7) - appBar.preferredSize.height,
-                child: Chart(_recentTransactions),
-              ),
-              SizedBox(
-                width: mediaQuery.size.width * 0.6,
-                height: mediaQuery.size.height * 0.78,
-                child:
-                TransactionList(_userTransaction, _deleteTransaction),
-              ),
-            ],
-          ),
+                  children: [
+                    SizedBox(
+                      width: mediaQuery.size.width * 0.4,
+                      height: (mediaQuery.size.height * 0.7) -
+                          appBar.preferredSize.height,
+                      child: Chart(_recentTransactions),
+                    ),
+                    SizedBox(
+                      width: mediaQuery.size.width * 0.6,
+                      height: mediaQuery.size.height * 0.78,
+                      child:
+                          TransactionList(_userTransaction, _deleteTransaction),
+                    ),
+                  ],
+                ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _startAddNewTransaction(context, mediaQuery),
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: appBar as ObstructingPreferredSizeWidget,
+            child: mainBody,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: mainBody,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    onPressed: () =>
+                        _startAddNewTransaction(context, mediaQuery),
+                    child: const Icon(Icons.add),
+                  ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+          );
   }
 }

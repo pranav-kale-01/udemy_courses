@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/transaction.dart';
@@ -43,7 +46,9 @@ class TransactionList extends StatelessWidget {
                   child: ListTile(
                     leading: CircleAvatar(
                       radius: 30,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: Platform.isIOS
+                          ? CupertinoTheme.of(context).primaryColor
+                          : Theme.of(context).colorScheme.primary,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 4,
@@ -63,7 +68,7 @@ class TransactionList extends StatelessWidget {
                     subtitle: Text(
                       DateFormat.yMMMd().format(transactions[index].date),
                     ),
-                    trailing: mediaQuery.size.width < 360
+                    trailing: mediaQuery.size.width < 380
                         ? IconButton(
                             icon: Icon(
                               Icons.delete,
@@ -73,9 +78,11 @@ class TransactionList extends StatelessWidget {
                                 _deleteTransaction(transactions[index].id),
                           )
                         : SizedBox(
-                          width: mediaQuery.size.width * 0.23,
-                          child: TextButton(
-                              onPressed: () {},
+                            width: mediaQuery.size.width * 0.23,
+                            child: TextButton(
+                              onPressed: () {
+                                _deleteTransaction(transactions[index].id);
+                              },
                               child: Row(
                                 children: <Widget>[
                                   Icon(
@@ -85,13 +92,17 @@ class TransactionList extends StatelessWidget {
                                   SizedBox(
                                     width: mediaQuery.size.width * 0.01,
                                   ),
-                                  Text(  'Delete', style: TextStyle(
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),)
+                                  Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.error,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
-                        ),
+                          ),
                   ),
                 ),
               );

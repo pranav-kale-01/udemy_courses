@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:udemy_course_3/widgets/adaptive_flatbutton.dart';
+import 'package:udemy_course_3/widgets/adaptive_text_field.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
+  DateTime? chosenDate;
 
-  const NewTransaction(this.addNewTransaction, {Key? key}) : super(key: key);
+  NewTransaction(this.addNewTransaction, {Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _NewTransactionState();
@@ -13,38 +19,63 @@ class NewTransaction extends StatefulWidget {
 class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
   final amountController = TextEditingController();
-  DateTime? chosenDate;
 
   void _submitData() {
     final enteredTitle = titleController.text;
     final enteredAmount = double.parse(amountController.text);
 
-    if (enteredTitle.isEmpty || enteredAmount <= 0 || chosenDate == null) {
+    if (enteredTitle.isEmpty ||
+        enteredAmount <= 0 ||
+        widget.chosenDate == null) {
       return;
     }
 
-    widget.addNewTransaction(
-      titleController.text,
-      double.parse(amountController.text),
-      chosenDate
-    );
+    widget.addNewTransaction(titleController.text,
+        double.parse(amountController.text), widget.chosenDate);
 
     Navigator.of(context).pop();
   }
 
   void _presentDatePicker() async {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2015),
-      lastDate: DateTime.now(),
-    ).then((pickedDate) {
-      if (pickedDate != null) {
-        setState(() {
-          chosenDate = pickedDate;
-        });
-      }
-    });
+    Platform.isIOS
+        ? showCupertinoModalPopup(
+            context: context,
+            builder: (_) => Container(
+              height: 190,
+              color: const Color.fromARGB(255, 255, 255, 255),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 180,
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.date,
+                      onDateTimeChanged: (pickedDate) {
+                        setState(() {
+                          debugPrint('date is ' + pickedDate.toString());
+                          widget.chosenDate = pickedDate;
+                        });
+                      },
+                      initialDateTime: DateTime.now(),
+                      minimumDate: DateTime(2017),
+                      maximumDate: DateTime.now(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2015),
+            lastDate: DateTime.now(),
+          ).then((pickedDate) {
+            if (pickedDate != null) {
+              setState(() {
+                widget.chosenDate = pickedDate;
+              });
+            }
+          });
   }
 
   @override
@@ -62,20 +93,20 @@ class _NewTransactionState extends State<NewTransaction> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                ),
-                onChanged: (value) {},
+              AdaptiveTextField.getAdaptiveTextField(
+                title: 'Title',
+                textController: titleController,
               ),
-              TextField(
-                controller: amountController,
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
-                ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 4),
+              ),
+              AdaptiveTextField.getAdaptiveTextField(
+                title: 'Amount',
+                textController: amountController,
                 keyboardType: TextInputType.number,
-                onSubmitted: (_) => _submitData(),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 4),
               ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -83,35 +114,22 @@ class _NewTransactionState extends State<NewTransaction> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      chosenDate == null
+                      widget.chosenDate == null
                           ? 'No Date Chosen'
-                          : 'Chosen Date - ${DateFormat.yMd().format(chosenDate!)}',
+                          : 'Chosen Date - ${DateFormat.yMd().format(widget.chosenDate!)}',
                     ),
                     Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: Colors.black26,
-                          ),
-                        ),
+                      child: AdaptiveFlatButton.adaptiveFlatButton(
+                        child: const Text('Choose Date'),
                         onPressed: _presentDatePicker,
-                        child: const Text("Choose Date"),
                       ),
                     ),
                   ],
                 ),
               ),
-              ElevatedButton(
+              AdaptiveFlatButton.adaptiveFlatButton(
                 child: const Text('Add Transaction'),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                    Theme.of(context).buttonTheme.colorScheme?.primary,
-                  ),
-                  foregroundColor: MaterialStateProperty.all(
-                    Theme.of(context).buttonTheme.colorScheme?.secondary,
-                  ),
-                ),
                 onPressed: _submitData,
               ),
             ],
