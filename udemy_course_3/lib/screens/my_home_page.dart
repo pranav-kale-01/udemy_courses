@@ -45,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _startAddNewTransaction(BuildContext cont, mediaQuery) {
+<<<<<<< HEAD
     Platform.isIOS
         ? showCupertinoModalBottomSheet(
             context: context,
@@ -63,6 +64,20 @@ class _MyHomePageState extends State<MyHomePage> {
               child: NewTransaction(_addNewTransaction),
             ),
           );
+=======
+    showModalBottomSheet(
+      constraints: BoxConstraints(
+        maxHeight: (mediaQuery.size.height * 0.80),
+      ),
+      context: cont,
+      builder: (_) {
+        return GestureDetector(
+          onTap: () {},
+          child: NewTransaction(_addNewTransaction),
+        );
+      },
+    );
+>>>>>>> 1e376f170bc6072677dc30218c182c6e667c9612
   }
 
   void _deleteTransaction(String transactionId) {
@@ -75,8 +90,25 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
+<<<<<<< HEAD
     final appBar = AdaptiveAppBar.getAdaptiveAppBar(
         context, () => _startAddNewTransaction(context, mediaQuery));
+=======
+    final appBar = AppBar(
+      title: const Text('Personal Expenses'),
+      actions:  [
+        Container(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 4,
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => _startAddNewTransaction(context, mediaQuery),
+          ),
+        )
+      ],
+    );
+>>>>>>> 1e376f170bc6072677dc30218c182c6e667c9612
 
     final mainBody = SafeArea(
       child: SizedBox(

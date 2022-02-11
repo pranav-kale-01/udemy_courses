@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import './transaction_item.dart';
 import '../models/transaction.dart';
 
 class TransactionList extends StatelessWidget {
@@ -43,6 +43,7 @@ class TransactionList extends StatelessWidget {
                     horizontal: 5,
                     vertical: 8,
                   ),
+<<<<<<< HEAD
                   child: ListTile(
                     leading: CircleAvatar(
                       radius: 30,
@@ -104,6 +105,12 @@ class TransactionList extends StatelessWidget {
                             ),
                           ),
                   ),
+=======
+                  child: TransactionItem(
+                      transaction: transactions[index],
+                      mediaQuery: mediaQuery,
+                      deleteTransaction: _deleteTransaction),
+>>>>>>> 1e376f170bc6072677dc30218c182c6e667c9612
                 ),
               );
             },
