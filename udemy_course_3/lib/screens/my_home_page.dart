@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startAddNewTransaction(BuildContext cont, mediaQuery) {
     showModalBottomSheet(
       constraints: BoxConstraints(
-        maxHeight: ( mediaQuery.size.height * 0.80 ),
+        maxHeight: (mediaQuery.size.height * 0.80),
       ),
       context: cont,
       builder: (_) {
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final appBar = AppBar(
       title: const Text('Personal Expenses'),
-      actions: [
+      actions:  [
         Container(
           margin: const EdgeInsets.symmetric(
             horizontal: 4,
@@ -86,33 +86,37 @@ class _MyHomePageState extends State<MyHomePage> {
         child: SingleChildScrollView(
           child: mediaQuery.orientation == Orientation.portrait
               ? Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: ( mediaQuery.size.height * 0.4) - appBar.preferredSize.height - mediaQuery.padding.top,
-                child: Chart(_recentTransactions),
-              ),
-              SizedBox(
-                height: ( mediaQuery.size.height * 0.6),
-                child: TransactionList(_userTransaction, _deleteTransaction),
-              ),
-            ],
-          )
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: (mediaQuery.size.height * 0.4) -
+                          appBar.preferredSize.height -
+                          mediaQuery.padding.top,
+                      child: Chart(_recentTransactions),
+                    ),
+                    SizedBox(
+                      height: (mediaQuery.size.height * 0.6),
+                      child:
+                          TransactionList(_userTransaction, _deleteTransaction),
+                    ),
+                  ],
+                )
               : Row(
-            children: [
-              SizedBox(
-                width: mediaQuery.size.width * 0.4,
-                height: (mediaQuery.size.height * 0.7) - appBar.preferredSize.height,
-                child: Chart(_recentTransactions),
-              ),
-              SizedBox(
-                width: mediaQuery.size.width * 0.6,
-                height: mediaQuery.size.height * 0.78,
-                child:
-                TransactionList(_userTransaction, _deleteTransaction),
-              ),
-            ],
-          ),
+                  children: [
+                    SizedBox(
+                      width: mediaQuery.size.width * 0.4,
+                      height: (mediaQuery.size.height * 0.7) -
+                          appBar.preferredSize.height,
+                      child: Chart(_recentTransactions),
+                    ),
+                    SizedBox(
+                      width: mediaQuery.size.width * 0.6,
+                      height: mediaQuery.size.height * 0.78,
+                      child:
+                          TransactionList(_userTransaction, _deleteTransaction),
+                    ),
+                  ],
+                ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
