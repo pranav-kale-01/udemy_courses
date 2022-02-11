@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 import '../models/transaction.dart';
@@ -21,7 +24,9 @@ class TransactionItem extends StatelessWidget {
     return ListTile(
       leading: CircleAvatar(
         radius: 30,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Platform.isIOS
+            ? CupertinoTheme.of(context).primaryColor
+            : Theme.of(context).colorScheme.primary,
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 4,
@@ -41,7 +46,7 @@ class TransactionItem extends StatelessWidget {
       subtitle: Text(
         DateFormat.yMMMd().format(transaction.date),
       ),
-      trailing: mediaQuery.size.width < 360
+      trailing: mediaQuery.size.width < 380
           ? IconButton(
               icon: Icon(
                 Icons.delete,
@@ -52,7 +57,9 @@ class TransactionItem extends StatelessWidget {
           : SizedBox(
               width: mediaQuery.size.width * 0.23,
               child: TextButton(
-                onPressed: () => _deleteTransaction(transaction.id),
+                onPressed: () {
+                  _deleteTransaction(transaction.id);
+                },
                 child: Row(
                   children: <Widget>[
                     Icon(
