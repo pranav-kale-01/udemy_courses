@@ -6,9 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:udemy_course_3/widgets/adaptive_flatbutton.dart';
 import 'package:udemy_course_3/widgets/adaptive_text_field.dart';
 
+// ignore: must_be_immutable
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
-  DateTime? chosenDate;
 
   NewTransaction(this.addNewTransaction, {Key? key}) : super(key: key);
 
@@ -19,19 +19,18 @@ class NewTransaction extends StatefulWidget {
 class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
   final amountController = TextEditingController();
+  DateTime? chosenDate;
 
   void _submitData() {
     final enteredTitle = titleController.text;
     final enteredAmount = double.parse(amountController.text);
 
-    if (enteredTitle.isEmpty ||
-        enteredAmount <= 0 ||
-        widget.chosenDate == null) {
+    if (enteredTitle.isEmpty || enteredAmount <= 0 || chosenDate == null) {
       return;
     }
 
-    widget.addNewTransaction(titleController.text,
-        double.parse(amountController.text), widget.chosenDate);
+    widget.addNewTransaction(
+        titleController.text, double.parse(amountController.text), chosenDate);
 
     Navigator.of(context).pop();
   }
@@ -52,7 +51,7 @@ class _NewTransactionState extends State<NewTransaction> {
                       onDateTimeChanged: (pickedDate) {
                         setState(() {
                           debugPrint('date is ' + pickedDate.toString());
-                          widget.chosenDate = pickedDate;
+                          chosenDate = pickedDate;
                         });
                       },
                       initialDateTime: DateTime.now(),
@@ -72,7 +71,7 @@ class _NewTransactionState extends State<NewTransaction> {
           ).then((pickedDate) {
             if (pickedDate != null) {
               setState(() {
-                widget.chosenDate = pickedDate;
+                chosenDate = pickedDate;
               });
             }
           });
@@ -114,9 +113,9 @@ class _NewTransactionState extends State<NewTransaction> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.chosenDate == null
+                      chosenDate == null
                           ? 'No Date Chosen'
-                          : 'Chosen Date - ${DateFormat.yMd().format(widget.chosenDate!)}',
+                          : 'Chosen Date - ${DateFormat.yMd().format(chosenDate!)}',
                     ),
                     Padding(
                       padding: const EdgeInsets.all(4.0),
